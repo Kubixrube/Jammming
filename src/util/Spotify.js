@@ -1,6 +1,6 @@
 const clientID = 'ba07110e32fc4b65a52b47e6bd4cc473';
-//const redirectURI = 'http://localhost:3000/';
-const redirectURI = 'mariojammming.surge.sh';
+const redirectURI = 'http://localhost:3000/';
+//const redirectURI = 'http://mariojammming.surge.sh';
 let accessToken;
 
 const Spotify = {
@@ -19,7 +19,7 @@ const Spotify = {
         window.history.pushState('Access Token', null, '/');
         return accessToken;
     } else {
-        window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+        window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-private&redirect_uri=${redirectURI}`;
     }
   },
     
@@ -50,7 +50,8 @@ const Spotify = {
     });
   },
     
-  savePlaylist(playlistName, tracksURI) {
+  savePlaylist(playlistName, tracksURI, publicPrivateFlag) {
+    console.log(!publicPrivateFlag);
     if (!playlistName || !tracksURI.length) {
         console.log('There are no tracks to save!!')
         return;
@@ -74,7 +75,8 @@ const Spotify = {
             return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
               headers: headers,
               method: 'POST',
-              body: JSON.stringify({name: playlistName})
+              body: JSON.stringify({name: playlistName,
+                                   public: !publicPrivateFlag})
           }).then(response => response.json()
           ).then(jsonResponse => {
             let playlistID = jsonResponse.id;

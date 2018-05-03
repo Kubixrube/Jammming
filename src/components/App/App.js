@@ -13,14 +13,30 @@ class App extends React.Component {
       this.state = {
           playlistName: 'New Playlist',
           playlistTracks: [],
-          searchResults: []
-      }
+          searchResults: [
+
+      { name:'Tiny Dancer',
+
+        artist:'Elton John',
+
+        album:'Madam Across The Water',
+
+        id: 1,
+        uri: 'spotify:track:4bJpdznQXEeRE1xrn69nMU'
+      }],
+          privatePlaylist: false
+      };
       this.addTrack = this.addTrack.bind(this);
       this.removeTrack = this.removeTrack.bind(this);
       this.updatePlaylistName = this.updatePlaylistName.bind(this);
       this.savePlaylist = this.savePlaylist.bind(this);
       this.search = this.search.bind(this);
       this.clearPlaylist = this.clearPlaylist.bind(this);
+      this.privatePlaylist = this.privatePlaylist.bind(this);
+  }
+    
+  componentDidUpdate() {
+      //console.log(this.state);
   }
     
   addTrack(track) {
@@ -51,12 +67,11 @@ class App extends React.Component {
           playlistTracks: [],
           playlistName: ''
       })
-      //console.log(this.state.playlistName);
   }
     
   savePlaylist() {
       let trackURIs = this.state.playlistTracks.map(track => track.uri);
-      Spotify.savePlaylist(this.state.playlistName, trackURIs).then(() => {
+      Spotify.savePlaylist(this.state.playlistName, trackURIs, this.state.privatePlaylist).then(() => {
         this.clearPlaylist();
       });
   }
@@ -65,6 +80,10 @@ class App extends React.Component {
     Spotify.search(term).then(results => {
       this.setState({searchResults: results});                
     });
+  }
+  
+  privatePlaylist() {
+      this.state.privatePlaylist ? this.setState({privatePlaylist: false}) : this.setState({privatePlaylist: true})
   }
     
   render() {
@@ -75,7 +94,7 @@ class App extends React.Component {
             <SearchBar onSearch={this.search} />
         <div className="App-playlist">
           <SearchResults onAdd={this.addTrack} searchResults={this.state.searchResults} />
-          <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} onClear={this.clearPlaylist}/>
+          <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} onClear={this.clearPlaylist} checked={this.state.privatePlaylist} onCheckChange={this.privatePlaylist}/>
         </div>
         </div>
       </div>
