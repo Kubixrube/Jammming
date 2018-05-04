@@ -1,6 +1,6 @@
 const clientID = 'ba07110e32fc4b65a52b47e6bd4cc473';
-//const redirectURI = 'http://localhost:3000/';
-const redirectURI = 'mariojammming.surge.sh';
+const redirectURI = 'http://localhost:3000/';
+//const redirectURI = 'mariojammming.surge.sh';
 let accessToken;
 
 const Spotify = {
