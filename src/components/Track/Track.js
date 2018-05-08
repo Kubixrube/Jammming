@@ -4,39 +4,53 @@ import './Track.css';
 class Track extends React.Component {
     constructor(props) {
         super(props);
-
+        this.state = {
+            trackTarget: ''
+        };
         this.renderAction = this.renderAction.bind(this);
         this.addTrack = this.addTrack.bind(this);
         this.removeTrack = this.removeTrack.bind(this);
         this.displayPlayButton = this.displayPlayButton.bind(this);
+        this.moveTracks = this.moveTracks.bind(this);
     }
     
     renderAction() {
-        if (this.props.isRemoval) {
-            return <a className="Track-action" onClick={this.removeTrack}>-</a>;
+         if (this.props.isRemoval) {
+            return <a className="Track-action" onClick={this.moveTracks}>-</a>;
         } else {
-            return <a className="Track-action" onClick={this.addTrack}>+</a>;
+            return <a className="Track-action" onClick={this.moveTracks}>+</a>;
         }
     }
-    
+    /*
+     renderAction() {
+         if (this.props.isRemoval) {
+            return <a className="Track-action" onClick={this.removeTrack} trackTarget='SearchResults'>-</a>;
+        } else {
+            return <a className="Track-action" onClick={this.addTrack} trackTarget='Playlist'>+</a>;
+        }
+    }
+    */
     addTrack() {
-        this.props.onAdd(this.props.track);
-        console.log(this.props.isRemoval);
-        
+        this.props.onAdd(this.props.track);        
     }
     
     removeTrack() {
         this.props.onRemove(this.props.track);
-        console.log(this.props.isRemoval);
+    }
+    
+    moveTracks() {
+        this.props.onMoveTrack(this.props.track, this.props.trackTarget);
+        
     }
     
     displayPlayButton() {
-        let uri = `https://open.spotify.com/embed?uri=${this.props.track.uri}`
+        
         if (this.props.playButton) {
+          let uri = `https://open.spotify.com/embed?uri=${this.props.track.uri}`
             return (
-                <div className="Track-information">
                 <div>
-                  <iframe src={uri} className="Track" width="300" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                <div className="PlayButton">
+                  <iframe src={uri} width="300" height="80" frameBorder="0" allowtransparency="true" allow="encrypted-media"></iframe>
                 </div>
                 </div>
             );
@@ -54,9 +68,7 @@ class Track extends React.Component {
     render() {
         return(
           <div className="Track">
-            
-              {this.displayPlayButton()}
-            
+            {this.displayPlayButton()}
             {this.renderAction()}
           </div>
         );

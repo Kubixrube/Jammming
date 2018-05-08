@@ -1,6 +1,5 @@
 const clientID = 'ba07110e32fc4b65a52b47e6bd4cc473';
 const redirectURI = 'http://localhost:3000/';
-//const redirectURI = 'http://mariojammming.surge.sh';
 let accessToken;
 
 const Spotify = {
@@ -53,7 +52,11 @@ const Spotify = {
   savePlaylist(playlistName, tracksURI, publicPrivateFlag) {
     console.log(!publicPrivateFlag);
     if (!playlistName || !tracksURI.length) {
-        console.log('There are no tracks to save!!')
+        if(!playlistName) {
+            console.log('Playlist name is blank!!')
+        } else {
+            console.log('There are no tracks to save!!')
+        }
         return;
     }
       let accessToken = this.getAccessToken();
@@ -80,8 +83,6 @@ const Spotify = {
           }).then(response => response.json()
           ).then(jsonResponse => {
             let playlistID = jsonResponse.id;
-                //console.log(`Playlist ID ${playlistID}`)
-                //console.log(`Tracks URI ${tracksURI}`)
           return fetch(`https://api.spotify.com/v1/users/${userId}/playlists/${playlistID}/tracks`, {
               headers: headers,
               method: 'POST',

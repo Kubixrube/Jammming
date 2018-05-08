@@ -13,17 +13,7 @@ class App extends React.Component {
       this.state = {
           playlistName: 'New Playlist',
           playlistTracks: [],
-          searchResults: [
-
-      { name:'Tiny Dancer',
-
-        artist:'Elton John',
-
-        album:'Madam Across The Water',
-
-        id: 1,
-        uri: 'spotify:track:4bJpdznQXEeRE1xrn69nMU'
-      }],
+          searchResults: [],
           privatePlaylist: false
       };
       this.addTrack = this.addTrack.bind(this);
@@ -33,33 +23,57 @@ class App extends React.Component {
       this.search = this.search.bind(this);
       this.clearPlaylist = this.clearPlaylist.bind(this);
       this.privatePlaylist = this.privatePlaylist.bind(this);
+      this.moveTrack = this.moveTrack.bind(this);
   }
     
   componentDidUpdate() {
       //console.log(this.state);
   }
     
+    
   addTrack(track) {
-      //console.log('Add Track');
       if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
           alert('This track is already on the Playlist!')
           return;
       }
       let newTracks = this.state.playlistTracks;
       newTracks.push(track);
+      this.removeTrack(track);      
       this.setState({playlistTracks: newTracks});
   }
   
   removeTrack(track) {
-      //console.log('Remove Track');
       let newTracks = this.state.playlistTracks;
       newTracks = newTracks.filter(savedTrack => savedTrack.id !== track.id)
+            
       this.setState({playlistTracks: newTracks});
+  }
+  
+  moveTrack(track, trackTarget) {
+      let playlistTracks = this.state.playlistTracks;
+      let searchResults = this.state.searchResults;
+      
+      if (trackTarget === 'Playlist') {
+          //add the track to playlist
+          playlistTracks.push(track);
+          //Remove track from search
+          searchResults = searchResults.filter(movedTrack => movedTrack.id !== track.id);      
+          //update state
+          this.setState({searchResults: searchResults});
+          this.setState({playlistTracks: playlistTracks});
+       } else if (trackTarget === 'SearchResults') {
+          //move the track from playlist to search, remove from playlist
+          searchResults.unshift(track);
+          //Remove track from Playlist
+          playlistTracks = playlistTracks.filter(movedTrack => movedTrack.id !== track.id);
+          //update state
+          this.setState({searchResults: searchResults});
+          this.setState({playlistTracks: playlistTracks});
+       }
   }
 
   updatePlaylistName(name) {
       this.setState({playlistName: name});
-      console.log(this.state.playlistName);
   }
     
   clearPlaylist() {
@@ -93,8 +107,8 @@ class App extends React.Component {
         <div className="App">
             <SearchBar onSearch={this.search} />
         <div className="App-playlist">
-          <SearchResults onAdd={this.addTrack} searchResults={this.state.searchResults} />
-          <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} onClear={this.clearPlaylist} checked={this.state.privatePlaylist} onCheckChange={this.privatePlaylist}/>
+          <SearchResults onAdd={this.addTrack} searchResults={this.state.searchResults} onMoveTrack={this.moveTrack}/>
+          <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} onClear={this.clearPlaylist} checked={this.state.privatePlaylist} onCheckChange={this.privatePlaylist} onMoveTrack={this.moveTrack}/>
         </div>
         </div>
       </div>
